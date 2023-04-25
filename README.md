@@ -10,3 +10,47 @@ Operationally this works well, but the end application using sourceloop services
 
 That will look something like this:
 <img src="https://user-images.githubusercontent.com/110156023/234196771-0e8dacb1-73be-48b8-9733-8986720037b5.png" width="800">
+
+
+Since the data source type has to be different in both cases (juggler.DataSource / SequelizeDataSource) conditional exports can be used instead. Like the following:
+
+```
+export class AuditLogRepositoryDefault extends DefaultCrudRepository<
+  AuditLog,
+  typeof AuditLog.prototype.id
+> {
+  constructor(
+    @inject(`datasources.${AuditDbSourceName}`)
+    dataSource: juggler.DataSource,
+  ) {
+    super(AuditLog, dataSource);
+  }
+}
+
+export class AuditLogRepositorySequelize extends SequelizeCrudRepository<
+  AuditLog,
+  typeof AuditLog.prototype.id
+> {
+  constructor(
+    @inject(`datasources.${AuditDbSourceName}`)
+    dataSource: SequelizeDataSource,
+  ) {
+    super(AuditLog, dataSource);
+  }
+}
+
+function ConditionalCrudRepository<
+  D extends new (...args: any[]) => any,
+  S extends new (...args: any[]) => any,
+>(defaultClass: D, sequelizeClass: S) {
+  if (process.env.ADD_MIXIN === 'true') {
+    return class extends sequelizeClass {};
+  }
+  return class extends defaultClass {};
+}
+
+export class AuditLogRepository extends ConditionalCrudRepository(
+  AuditLogRepositoryDefault,
+  AuditLogRepositorySequelize,
+) {}
+```
