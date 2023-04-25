@@ -6,9 +6,7 @@ To achieve this all the repositories in sourceloop services will extend from a f
 
 <img src="https://user-images.githubusercontent.com/110156023/234196953-2f71217d-d84b-4644-b1c7-a017a9cfebac.png" width="800">
 
-Operationally this works well, but the end application using sourceloop services might extend the crud repository class that will need the proper type of the Exported repository based on the condition specified. 
+Operationally this works well, but the end application using sourceloop services might use the crud repository class that will need the proper type of the exported repository based on the condition specified. By default they will have the type set as `DefaultCrudRepository` which limits us in case there is extra stuff that `SequelizeCRUDRepository` provides. So to tackle this end-application code can have a `d.ts` file (which can be placed via postinstall script as well).
 
-By default when projects using this flag need to extend any of the repositories of the service. They will have the type set as DefaultCrudRepository which limits us in case there is extra stuff that SequelizeCRUDRepository provides. So to tackle this Project code will have to keep a d.ts file.(which can be placed via postinstall script).
-
-That looks something like this:
+That will look something like this:
 <img src="https://user-images.githubusercontent.com/110156023/234196771-0e8dacb1-73be-48b8-9733-8986720037b5.png" width="800">
